@@ -1,3 +1,36 @@
+// import { defineSchema, defineTable } from "convex/server";
+// import { v } from "convex/values";
+
+// export default defineSchema({
+//   users: defineTable({
+//     name: v.string(),
+//     email: v.string(),
+//     image: v.optional(v.string()),
+//     role: v.union(v.literal("candidate"), v.literal("interviewer")),
+//     clerkId: v.string(),
+//   }).index("by_clerk_id", ["clerkId"]),
+
+//   interviews: defineTable({
+//     title: v.string(),
+//     description: v.optional(v.string()),
+//     startTime: v.number(),
+//     endTime: v.optional(v.number()),
+//     status: v.string(),
+//     streamCallId: v.string(),
+//     candidateId: v.string(),
+//     interviewerIds: v.array(v.string()),
+//   })
+//     .index("by_candidate_id", ["candidateId"])
+//     .index("by_stream_call_id", ["streamCallId"]),
+
+//   comments: defineTable({
+//     content: v.string(),
+//     rating: v.number(),
+//     interviewerId: v.string(),
+//     interviewId: v.id("interviews"),
+//   }).index("by_interview_id", ["interviewId"]),
+// });
+
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -6,7 +39,7 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     image: v.optional(v.string()),
-    role: v.union(v.literal("candidate"), v.literal("interviewer")),
+    role: v.union(v.literal("candidate"), v.literal("interviewer"), v.literal("admin")),
     clerkId: v.string(),
   }).index("by_clerk_id", ["clerkId"]),
 
@@ -26,6 +59,10 @@ export default defineSchema({
   comments: defineTable({
     content: v.string(),
     rating: v.number(),
+    technicalSkills: v.optional(v.number()),
+    communication: v.optional(v.number()),
+    problemSolving: v.optional(v.number()),
+    attitude: v.optional(v.number()),
     interviewerId: v.string(),
     interviewId: v.id("interviews"),
   }).index("by_interview_id", ["interviewId"]),

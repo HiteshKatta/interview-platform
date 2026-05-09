@@ -15,12 +15,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarIcon, CheckCircle2Icon, ClockIcon, XCircleIcon } from "lucide-react";
 import { format } from "date-fns";
 import CommentDialog from "@/components/CommentDialog";
+import { useRouter } from "next/navigation";
+import { useUserRole } from "@/hooks/useUserRole";
+import { useEffect } from "react";
 
 type Interview = Doc<"interviews">;
 
 function DashboardPage() {
-  const users = useQuery(api.users.getUsers);
-  const interviews = useQuery(api.interviews.getAllInterviews);
+  const router = useRouter();
+  const { isInterviewer, isLoading } = useUserRole();
+  const users = useQuery(api.users.getUsers,!isLoading && isInterviewer ? {} : "skip");
+  const interviews = useQuery(api.interviews.getAllInterviews,!isLoading && isInterviewer ? {} : "skip");
   const updateStatus = useMutation(api.interviews.updateInterviewStatus);
 
   const handleStatusUpdate = async (interviewId: Id<"interviews">, status: string) => {
@@ -32,7 +37,15 @@ function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+      if (!isLoading && !isInterviewer) {
+        alert("🚫 Access Denied! Only Interviewers can access this page.");
+        router.push("/");
+      }
+    }, [isInterviewer, isLoading, router]);
+
   if (!interviews || !users) return <LoaderUI />;
+  if (!isInterviewer) return null;
 
   const groupedInterviews = groupInterviews(interviews);
 
